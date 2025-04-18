@@ -1,0 +1,6 @@
+@import "tailwindcss";
+
+body {
+   /* cursor: url('/src/assets/pointer.svg'), auto; */
+    cursor: pointer;
+  }
