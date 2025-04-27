@@ -1,6 +1,7 @@
 @import "tailwindcss";
+@import "primeicons/primeicons.css";
 
 body {
    /* cursor: url('/src/assets/pointer.svg'), auto; */
-    cursor: pointer;
+    /* cursor: pointer;*/
   }

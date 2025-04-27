@@ -1,10 +1,13 @@
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef } from "react";
 
 export default function CustomCursor() {
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
   const [followerPos, setFollowerPos] = useState({ x: 0, y: 0 });
   const [isVisible, setIsVisible] = useState(true);
   const [isHoveringButton, setIsHoveringButton] = useState(false);
+  const [cursorColor, setCursorColor] = useState("url(#Defualt)");
+  const [cursorSize, setCursorSize] = useState(28);
+  const [isHoveringLink, setIsHoveringLink] = useState(false);
   const lastMousePos = useRef({ x: 0, y: 0 });
   const angleRef = useRef(0);
 
@@ -29,25 +32,43 @@ export default function CustomCursor() {
       }
 
       const target = e.target;
-      if (target.tagName === 'BUTTON' || target.closest('button')) {
+      if (target.tagName === "BUTTON" || target.closest("button")) {
         setIsHoveringButton(true);
+        setCursorColor("black");
+        setCursorSize(34);
+        // Check which button class is being hovered
+        if (target.classList.contains("agree") || target.closest(".agree")) {
+          console.log("agree");
+          setCursorColor("url(#grad_agree)");
+        } else if (
+          target.classList.contains("disagree") ||
+          target.closest(".disagree")
+        ) {
+          console.log("disagree");
+          setCursorColor("url(#grad_disagree)");
+        }
+      } else if (target.tagName === "A" || target.closest("a")) {
+        setIsHoveringLink(true);
       } else {
+        setCursorSize(28);
+        setCursorColor("url(#Defualt)");
         setIsHoveringButton(false);
+        setIsHoveringLink(false);
       }
     };
 
     const handleMouseLeave = () => setIsVisible(false);
 
-    document.addEventListener('mousemove', handleMouseMove);
-    document.addEventListener('mouseleave', handleMouseLeave);
+    document.addEventListener("mousemove", handleMouseMove);
+    document.addEventListener("mouseleave", handleMouseLeave);
 
     return () => {
-      document.removeEventListener('mousemove', handleMouseMove);
-      document.removeEventListener('mouseleave', handleMouseLeave);
+      document.removeEventListener("mousemove", handleMouseMove);
+      document.removeEventListener("mouseleave", handleMouseLeave);
     };
   }, [isVisible]);
 
-  useEffect(() => {
+ useEffect(() => {
     let animationFrameId;
 
     const follow = () => {
@@ -72,26 +93,105 @@ export default function CustomCursor() {
       <style>{`body { cursor: none; }`}</style>
 
       {/* SVG Arrow Cursor */}
-      <svg
-        viewBox="0 0 24 24"
-        width="28"
-        height="28"
-        style={{
-          position: 'fixed',
-          top: mousePos.y,
-          left: mousePos.x,
-          transform: `translate(-50%, -50%) rotate(240deg)`,
-          pointerEvents: 'none',
-          zIndex: 10000,
-          opacity: isVisible ? 1 : 0,
-        }}
-      >
+      {!isHoveringLink ? (
+        <svg
+          viewBox="0 0 24 24"
+          width={cursorSize}
+          height={cursorSize}
+          style={{
+            position: "fixed",
+            top: mousePos.y,
+            left: mousePos.x,
+            transform: `translate(-25%, -10%) rotate(240deg)`, //use translate(-50%, -50%) to center the cursor
+            pointerEvents: "none",
+            zIndex: 10000,
+            opacity: isVisible ? 1 : 0,
+          }}
+        >
+          <defs>
+            {/* Defualt Gradient Definitions */}
+            <linearGradient id="Defualt" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop
+                offset="0%"
+                style={{ stopColor: "#a6824b", stopOpacity: 1 }}
+              />
+              <stop
+                offset="100%"
+                style={{ stopColor: "#f0d588", stopOpacity: 1 }}
+              />
+            </linearGradient>
+
+            {/* agree Gradient Definitions */}
+            <linearGradient id="grad_agree" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop
+                offset="0%"
+                style={{ stopColor: "#0d851d", stopOpacity: 1 }}
+              />
+              <stop
+                offset="100%"
+                style={{ stopColor: "#04bd1c", stopOpacity: 1 }}
+              />
+            </linearGradient>
+            {/* disagree Gradient Definitions */}
+            <linearGradient
+              id="grad_disagree"
+              x1="0%"
+              y1="0%"
+              x2="100%"
+              y2="100%"
+            >
+              <stop
+                offset="0%"
+                style={{ stopColor: "#851b14", stopOpacity: 1 }}
+              />
+              <stop
+                offset="100%"
+                style={{ stopColor: "#c9281c", stopOpacity: 1 }}
+              />
+            </linearGradient>
+          </defs>
+          <path d="M2 2 L22 12 L2 22 L6 12 Z" fill={cursorColor} />
+        </svg>
+      ) : (
+        <svg
+          viewBox="0 0 502.019 502.019"
+          width={cursorSize-4}
+          height={cursorSize-4}
+          style={{
+            position: "fixed",
+            top: mousePos.y,
+            left: mousePos.x,
+            transform: "translate(-25%, 0%) rotate(25deg)", // "translate(-50%, -50%)", // use for center the cursor
+            pointerEvents: "none",
+            zIndex: 10000,
+            opacity: isVisible ? 1 : 0,
+          }}
+          xmlns="http://www.w3.org/2000/svg"
+        >
+         <g id="SVGRepo_bgCarrier" strokeWidth="0"></g>
+  <g
+    id="SVGRepo_tracerCarrier"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  ></g>
+  <g id="SVGRepo_iconCarrier">
+   
         <path
-          d="M2 2 L22 12 L2 22 L6 12 Z"
-          fill= {isHoveringButton ? "#366e3a" : "#731ba6"}
+          style={{fill:"#E6E6E6",}}
+          d="M229.948,103.316c-5.832-13.268-19.063-29.615-49.624-16.18l-26.931,11.839L127.73,40.598 C112.274,5.439,73.904,2.839,54.426,21.427C40.324,34.886,33.911,56.34,43.187,77.441l91.016,208.341 c-22.169-16.79-64.508-16.601-83.459,2.916l0.494-0.748c-20.129,20.73-16.758,50.112,13.786,75.783l162.997,128.286 l233.508-102.652l1.27-20.347c3.306-52.939-6.108-105.899-27.454-154.456l-17.675-40.207c-0.916-2.084-1.919-4.12-3.004-6.104 c-12.326-22.537-39.916-31.826-63.473-21.583l-17.547,7.63l-19.83-45.109c-8.679-19.743-31.814-28.723-51.494-19.901 L229.948,103.316z"
+        ></path>
+        <path d="M444.501,210.539l-17.676-40.206c-1.028-2.34-2.168-4.656-3.385-6.878c-7.161-13.093-18.911-22.95-33.088-27.756 c-14.133-4.792-29.455-4.151-43.146,1.801l-8.412,3.658l-15.823-35.992c-5.29-12.033-14.965-21.264-27.242-25.992 c-12.219-4.706-25.509-4.363-37.435,0.963l-23.937,10.37c-4.167-6.298-9.306-11.049-15.351-14.177 c-11.874-6.145-26.241-5.589-42.706,1.65l-17.777,7.815l-21.639-49.223c-8.288-18.853-23.643-31.785-42.127-35.48 c-17.351-3.467-35.005,1.43-47.234,13.101c-18.429,17.587-23.724,43.993-13.5,67.251l80.667,184.65 c-24.236-5.899-52.415-1.223-68.77,13.384c-0.664,0.417-1.288,0.919-1.857,1.504c-10.81,11.134-16.141,24.582-15.416,38.889 c0.911,18.004,11.266,35.818,29.943,51.516c0.082,0.069,0.165,0.137,0.249,0.203l162.998,128.287 c1.795,1.412,3.979,2.142,6.186,2.142c1.362,0,2.732-0.278,4.023-0.846l233.508-102.652c3.425-1.505,5.723-4.797,5.956-8.531 l1.271-20.347C476.171,315.354,466.393,260.336,444.501,210.539z M352.489,222.009c1.647,3.747,5.313,5.978,9.159,5.978 c1.344,0,2.711-0.272,4.02-0.848c5.056-2.223,7.353-8.123,5.13-13.179l-23.956-54.492l8.339-3.627 c19.022-8.271,40.822-0.872,50.714,17.214c0.942,1.721,1.824,3.513,2.621,5.326l17.676,40.207 c20.612,46.888,29.819,98.691,26.628,149.809l-0.891,14.267l-222.438,97.785L71.339,355.976 c-14.24-12.003-22.096-24.836-22.718-37.116c-0.407-8.047,2.353-15.514,8.208-22.226c0.381-0.293,0.745-0.616,1.09-0.971 c14.6-15.038,50.97-16.116,69.865-2.182l40.575,38.97c1.938,1.862,4.434,2.788,6.926,2.788c2.627,0,5.25-1.029,7.213-3.073 c3.826-3.983,3.698-10.313-0.285-14.139l-39.644-38.076L52.342,73.416c-8.261-18.79-0.772-35.438,8.989-44.755 c7.402-7.066,18.705-10.114,29.506-7.957c12.177,2.434,22.027,10.928,27.738,23.917l68.24,155.229 c1.646,3.747,5.313,5.978,9.159,5.978c1.344,0,2.711-0.272,4.02-0.848c5.056-2.223,7.353-8.123,5.13-13.179l-38.553-87.698 l17.777-7.815c10.657-4.686,19.225-5.425,25.465-2.196c4.429,2.292,8.123,6.749,10.979,13.245c0,0.001,0.001,0.002,0.001,0.002 l40.244,91.546c1.647,3.747,5.313,5.978,9.159,5.978c1.344,0,2.711-0.272,4.02-0.848c5.056-2.223,7.353-8.123,5.13-13.179 l-36.198-82.342l23.15-10.029c0.038-0.017,0.076-0.034,0.115-0.051c7.039-3.156,14.897-3.361,22.127-0.577 c7.267,2.799,12.992,8.26,16.121,15.377L352.489,222.009z"></path>{" "}
+      
+          <path d="M398.019,391.021c-3.849,0-7.518-2.235-9.163-5.986c-2.218-5.058,0.084-10.956,5.142-13.174l11.595-5.085 c5.056-2.217,10.955,0.082,13.175,5.141c2.218,5.058-0.084,10.956-5.142,13.174l-11.595,5.085 C400.725,390.749,399.361,391.021,398.019,391.021z"></path>{" "}
+       
         
-        />
-      </svg>
+          {" "}
+          <path d="M239.019,461.021c-3.849,0-7.518-2.235-9.163-5.986c-2.218-5.058,0.084-10.956,5.142-13.174l123.826-54.31 c5.055-2.218,10.955,0.083,13.175,5.141c2.218,5.058-0.084,10.956-5.142,13.174l-123.826,54.31 C241.725,460.749,240.361,461.021,239.019,461.021z"></path>{" "}
+       
+  </g>
+        </svg>
+      )}
     </>
   );
 }
+
